@@ -87,43 +87,21 @@ class Normalizer:
                 result[i] = second[i]
         return result
 
+    def __is_one_human(self, first_human_name: list, second_human_name: list):
+        full_name = set(self.__extract_full_name(first_human_name) + self.__extract_full_name(second_human_name))
+        full_name = " ".join(full_name).strip().split(" ")
+        if len(full_name) > 3:
+            return False
+        return True
+
     def __is_merges_rows(self, first: list, second: list):
         if first == second:
             return False
 
-        full_name = set(self.__extract_full_name(first) + self.__extract_full_name(second))
-        full_name = " ".join(full_name).strip().split(" ")
-        if len(full_name) > 3:
+        if not self.__is_one_human(first, second):
             return False
 
         for item1, item2 in zip(first, second):
-            if item1 == '' or item2 == '' or item2 == item1:
-                continue
-            else:
+            if not (item1 == '' or item2 == '' or item2 == item1):
                 return False
         return True
-
-
-if __name__ == "__main__":
-    surname_end = re.compile(r".{3}((вич)|(вна))$", re.IGNORECASE)
-    name = 'олеговНа'
-    result = re.search(surname_end, name)
-    if result is None:
-        raise RuntimeError("")
-
-    phone = '+ 7 (495) 913-11-11'
-    pattern = re.compile(r"([+]{0,1})"
-                         r"[\s\-]*(\d{0,1})"
-                         r"[\s\-\(]*(\d{3})"
-                         r"[\s\-\)]*(\d{3})"
-                         r"[\s\-]*(\d{2})"
-                         r"[\s\-]*(\d{2})")
-    result = pattern.match(phone)
-    print(result.groups())
-    add = ' доб.(1234) '
-    pattern_additional = re.compile(r"[\s\S]*(\d{4})")
-    result = pattern_additional.match(add)
-    print(result.groups())
-
-
-    print(" ".join({'', 'Иван', 'Алексеевич', 'Лагунцов'}).strip().split(" "))

@@ -1,6 +1,4 @@
-from pprint import pprint
 from normalizer import Normalizer
-# читаем адресную книгу в формате CSV в список contacts_list
 import csv
 
 

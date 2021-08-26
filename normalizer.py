@@ -11,12 +11,11 @@ class Normalizer:
         self.headers = {key: value for value, key in enumerate(headers)}
         self.surname_pattern = re.compile(r".{3}((вич)|(вна))$", re.IGNORECASE)
         self.phone_pattern = {
-            'main': re.compile(r"([+]{0,1})"       #0
-                               r"[\s\-]*(\d{0,1})" #1
-                               r"[\s\-\(]*(\d{3})" #2
-                               r"[\s\-\)]*(\d{3})" #3
-                               r"[\s\-]*(\d{2})"   #4
-                               r"[\s\-]*(\d{2})"), #5
+            'main': re.compile(r"[\s+]*(7|8)*"      #1
+                               r"[\s\-\(]*(\d{3})"  #2
+                               r"[\s\-\)]*(\d{3})"  #3
+                               r"[\s\-]*(\d{2})"    #4
+                               r"[\s\-]*(\d{2}).*"),#5
             "additional": re.compile(r"[\s\S]*(\d{4})")
         }
 
@@ -35,9 +34,8 @@ class Normalizer:
 
     def __phone_normalize(self, phone: str) -> str:
         numbers = phone.split('доб.')
-        main_part = self.phone_pattern['main'].match(numbers[0]).groups()
+        phone_number = self.phone_pattern['main'].sub(fr'+7(\2)\3-\4-\5', numbers[0])
 
-        phone_number = f'+7({main_part[2]}){main_part[3]}-{main_part[4]}-{main_part[5]}'
         if len(numbers) > 1:
             additional_part = self.phone_pattern['additional'].match(numbers[1]).groups()
             phone_number = f'{phone_number} доб.{additional_part[0]}'
